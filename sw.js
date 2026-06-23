@@ -1,23 +1,20 @@
-const CACHE_NAME = 'day-tracker-v2';
-const ASSETS = [
+const CACHE_NAME = 'day-tracker-v3';
+const STATIC_ASSETS = [
   './',
   './index.html',
-  './manifest.json',
-  'https://cdn.tailwindcss.com',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap'
+  './manifest.json'
 ];
 
-// Installation : Mise en cache des fichiers nécessaires
+// Force le Service Worker à s'installer même si les CDNs ont des soucis de réseau
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      // On met d'abord en cache nos fichiers locaux qui sont 100% sûrs d'exister
+      return cache.addAll(STATIC_ASSETS);
     }).then(() => self.skipWaiting())
   );
 });
 
-// Activation : Nettoyage des vieux caches
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
@@ -32,14 +29,26 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Récupération des ressources : Priorité au cache si hors-ligne
+// Stratégie intelligente : On vérifie le cache d'abord, sinon on cherche sur le réseau 
+// ET on l'enregistre dans le cache pour la prochaine fois sans réseau !
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
-      return fetch(e.request).catch(() => {
+
+      return fetch(e.request).then((networkResponse) => {
+        // Enregistre dynamiquement les polices et designs dans le cache
+        if (e.request.method === 'GET') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(e.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+        // Si vraiment pas d'internet et fichier absent du cache, on renvoie la page d'accueil
         if (e.request.mode === 'navigate') {
           return caches.match('./index.html');
         }
