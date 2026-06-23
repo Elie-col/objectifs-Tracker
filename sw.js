@@ -1,26 +1,28 @@
-const CACHE_NAME = 'day-tracker-v3';
+const CACHE_NAME = 'day-tracker-v4'; // On passe en v4 pour forcer le téléphone à supprimer la v3 buggée
 const STATIC_ASSETS = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  'https://cdn.tailwindcss.com',
+  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap'
 ];
 
-// Force le Service Worker à s'installer même si les CDNs ont des soucis de réseau
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // On met d'abord en cache nos fichiers locaux qui sont 100% sûrs d'exister
       return cache.addAll(STATIC_ASSETS);
     }).then(() => self.skipWaiting())
   );
 });
 
+// Force la suppression immédiate des anciennes versions de caches de votre téléphone
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
+            console.log('Suppression de l\'ancien cache :', key);
             return caches.delete(key);
           }
         })
@@ -29,8 +31,6 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Stratégie intelligente : On vérifie le cache d'abord, sinon on cherche sur le réseau 
-// ET on l'enregistre dans le cache pour la prochaine fois sans réseau !
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
@@ -39,7 +39,6 @@ self.addEventListener('fetch', (e) => {
       }
 
       return fetch(e.request).then((networkResponse) => {
-        // Enregistre dynamiquement les polices et designs dans le cache
         if (e.request.method === 'GET') {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -48,7 +47,6 @@ self.addEventListener('fetch', (e) => {
         }
         return networkResponse;
       }).catch(() => {
-        // Si vraiment pas d'internet et fichier absent du cache, on renvoie la page d'accueil
         if (e.request.mode === 'navigate') {
           return caches.match('./index.html');
         }
