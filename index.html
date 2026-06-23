@@ -5,17 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎯 Mon Tracker d'Objectifs</title>
     
-    <!-- Balises pour donner un look de vraie application sur téléphone -->
+    <!-- Configuration PWA mobile -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Day Tracker">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5753/5753177.png">
     
-    <!-- Tailwind CSS pour un design moderne -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    
+    <!-- Tailwind CSS pour le style moderne -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome pour des icônes modernes -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts pour la typographie -->
+    
+    <!-- Typographie Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -31,6 +33,7 @@
 </head>
 <body class="min-h-screen pb-24">
 
+    <!-- En-tête -->
     <header class="bg-white border-b border-slate-100 sticky top-0 z-40 shadow-sm">
         <div class="max-w-md mx-auto px-4 py-4 flex justify-between items-center">
             <div>
@@ -54,8 +57,12 @@
         <!-- Objectifs en cours -->
         <section class="mb-8">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-sm font-bold text-slate-700 flex items-center gap-1.5">
-                    <i class="fa-solid fa-list-check text-indigo-500"></i> À accomplir aujourd'hui
+                <h2 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+                    <!-- Icone SVG Liste -->
+                    <svg class="w-5 h-5 text-indigo-500 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                    À accomplir aujourd'hui
                 </h2>
                 <span id="todo-count" class="text-xs text-slate-400 font-medium">0 objectif</span>
             </div>
@@ -65,7 +72,11 @@
         <!-- Objectifs terminés -->
         <section class="border-t border-slate-200 pt-6">
             <h2 class="text-sm font-bold text-slate-700 flex items-center gap-2 mb-4">
-                <i class="fa-solid fa-circle-check text-emerald-500"></i> Objectifs terminés aujourd'hui
+                <!-- Icone SVG Validation -->
+                <svg class="w-5 h-5 text-emerald-500 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Objectifs terminés aujourd'hui
             </h2>
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
                 <div class="overflow-x-auto">
@@ -86,16 +97,23 @@
 
     </main>
 
-    <!-- Bouton d'action flottant -->
-    <button onclick="toggleModal(true)" class="fixed bottom-6 right-6 bg-indigo-600 hover:bg-indigo-700 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-xl z-50 transition-all active:scale-95">
-        <i class="fa-solid fa-plus"></i>
+    <!-- Bouton d'action flottant (+) -->
+    <button onclick="toggleModal(true)" class="fixed bottom-6 right-6 bg-indigo-600 hover:bg-indigo-700 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center z-50 transition-all active:scale-95">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
     </button>
 
+    <!-- Modal d'Ajout d'Objectif -->
     <div id="add-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl transition-all">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-bold text-slate-800">Ajouter un objectif</h3>
-                <button onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
             <form id="goal-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
                 <div>
@@ -127,10 +145,13 @@
         </div>
     </div>
 
+    <!-- Modal de Confirmation de Suppression -->
     <div id="delete-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl transition-all text-center">
-            <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4 text-xl">
-                <i class="fa-regular fa-trash-can"></i>
+            <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
             </div>
             <h3 class="text-base font-bold text-slate-800 mb-2">Supprimer cet objectif ?</h3>
             <p class="text-sm text-slate-500 mb-6">Cette action est définitive et supprimera l'activité de votre calendrier.</p>
@@ -145,6 +166,7 @@
         </div>
     </div>
 
+    <!-- Logique applicative JavaScript -->
     <script>
         const jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
         let jourActuelFr = new Intl.DateTimeFormat('fr-FR', { weekday: 'long' }).format(new Date());
@@ -154,9 +176,28 @@
         let mesObjectifs = [];
         let activeTimerId = null;
         let timerInterval = null;
-        let idObjectifASupprimer = null; // Stocke temporairement l'ID à supprimer pour le modal personnalisé
+        let idObjectifASupprimer = null;
 
-        // Initialisation et chargement intelligent de la date pour le RAZ quotidien
+        // Enregistrement du Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => {
+                        console.log('Service Worker prêt !');
+                        // Si une mise à jour est trouvée, forcer le rafraîchissement
+                        reg.onupdatefound = () => {
+                            const installingWorker = reg.installing;
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    window.location.reload();
+                                }
+                            };
+                        };
+                    })
+                    .catch(err => console.log('Erreur SW :', err));
+            });
+        }
+
         function chargerDonnees() {
             const data = localStorage.getItem('mes_objectifs_db');
             const derniereVisite = localStorage.getItem('derniere_visite_date');
@@ -165,7 +206,6 @@
             if (data) {
                 mesObjectifs = JSON.parse(data);
                 
-                // Si le jour calendrier a changé, on réinitialise automatiquement à 0%
                 if (derniereVisite !== aujourdhuiString) {
                     mesObjectifs.forEach(obj => {
                         obj.tempsEcoule = 0;
@@ -174,7 +214,6 @@
                     sauvegarderDonnees();
                 }
             } else {
-                // Données de démonstration lors du tout premier lancement
                 mesObjectifs = [
                     { id: 1, nom: "Sport Cardio", jour: "Mardi", tempsVise: 120, tempsEcoule: 0 },
                     { id: 2, nom: "Lecture", jour: "Mardi", tempsVise: 30, tempsEcoule: 0 },
@@ -206,7 +245,6 @@
             }
         }
 
-        // Gestion du modal de suppression personnalisé
         function toggleDeleteModal(show, id = null) {
             const modal = document.getElementById('delete-modal');
             if (show) {
@@ -331,6 +369,8 @@
                     const card = document.createElement('div');
                     card.id = `card-${obj.id}`;
                     card.className = `bg-white rounded-2xl p-5 border ${estEnTrainDeTourner ? 'border-indigo-400 ring-4 ring-indigo-50' : 'border-slate-100'} transition-all duration-300 shadow-sm`;
+                    
+                    // Code HTML avec icônes SVG intégrées
                     card.innerHTML = `
                         <div class="flex justify-between items-start mb-3">
                             <div>
@@ -338,8 +378,17 @@
                                 <p class="time-label text-xs text-slate-400 mt-0.5"><span class="font-semibold text-indigo-600">${Math.floor(secondesRestantes/60)}m ${(secondesRestantes%60).toString().padStart(2,'0')}s</span> restant</p>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button onclick="toggleTimer(${obj.id})" class="w-11 h-11 rounded-full flex items-center justify-center transition-all ${estEnTrainDeTourner ? 'bg-amber-100 text-amber-600 hover:bg-amber-200' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'}"><i class="fa-solid ${estEnTrainDeTourner ? 'fa-pause' : 'fa-play'}"></i></button>
-                                <button onclick="toggleDeleteModal(true, ${obj.id})" class="w-9 h-9 rounded-xl flex items-center justify-center bg-slate-50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all"><i class="fa-regular fa-trash-can"></i></button>
+                                <button onclick="toggleTimer(${obj.id})" class="w-11 h-11 rounded-full flex items-center justify-center transition-all ${estEnTrainDeTourner ? 'bg-amber-100 text-amber-600 hover:bg-amber-200' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'}">
+                                    ${estEnTrainDeTourner ? 
+                                        `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>` : 
+                                        `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`
+                                    }
+                                </button>
+                                <button onclick="toggleDeleteModal(true, ${obj.id})" class="w-9 h-9 rounded-xl flex items-center justify-center bg-slate-50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                         <div class="mt-4">
@@ -360,7 +409,15 @@
                 termines.forEach(obj => {
                     const row = document.createElement('tr'); 
                     row.className = "border-b border-slate-50";
-                    row.innerHTML = `<td class="py-3 font-semibold text-slate-400 line-through">✅ ${obj.nom}</td><td class="py-3 text-center text-xs text-slate-500">${obj.tempsVise} min</td><td class="py-3 text-right"><span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded-md">Terminé</span></td>`;
+                    row.innerHTML = `
+                        <td class="py-3 font-semibold text-slate-400 line-through">
+                            <svg class="w-4 h-4 text-emerald-500 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                            ${obj.nom}
+                        </td>
+                        <td class="py-3 text-center text-xs text-slate-500">${obj.tempsVise} min</td>
+                        <td class="py-3 text-right">
+                            <span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded-md">Terminé</span>
+                        </td>`;
                     tableBody.appendChild(row);
                 });
             }
